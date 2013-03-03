@@ -53,8 +53,15 @@ public class ItemDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.content);
-        }
+			String x;
+			if (mItem.id.equals("1")) {
+				TextView tv = ((TextView) rootView.findViewById(R.id.item_detail));
+				tv.setText("Please add a new task!");
+			} else {
+				rootView = inflater.inflate(R.layout.list_of_tasks, container, false);
+				//tv.setText("Show tasks!");
+			}
+		}
 
         return rootView;
     }
