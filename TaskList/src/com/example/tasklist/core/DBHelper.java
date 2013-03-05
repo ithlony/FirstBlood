@@ -8,7 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-	public static final String DB_Name = "task_list_database.db";
+	private static final String DB_Name = "task_list_database.db";
+	private static final String Table_Name = "tasks";
 	private static final int DB_Version = 1;
 	public static final String[] DB_Columns = new String[]{"_id", "title", "detail", "priority", "frequency"};
 	private SQLiteDatabase db;
@@ -16,14 +17,14 @@ public class DBHelper extends SQLiteOpenHelper {
 	public DBHelper(Context context)
 	{
 		super(context, DB_Name, null, DB_Version);
+		db = getWritableDatabase();
 	}
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		this.db = db;
 		db.execSQL("create table if not exists " +
-				"tasks(_id integer primary key autoincrement, title varchar, detail TEXT, priorirty integer, frequency integer)");
+				this.Table_Name + "(_id integer primary key autoincrement, title varchar, detail TEXT, priority integer, frequency integer)");
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public Cursor get_table_cursor()
 	{
-		Cursor cursor = db.query(DB_Name, DB_Columns, null, null, null, null, null);
+		Cursor cursor = db.query(this.Table_Name, null, null, null, null, null, null);
 				
 		return cursor;
 	}
@@ -43,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	{
 		db.beginTransaction();
 		try {
-			db.delete(DB_Name, where, where_args);
+			db.delete(Table_Name, where, where_args);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -54,7 +55,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	{
 		db.beginTransaction();
 		try {
-			db.insert(DB_Name, null, value);
+			//db.execSQL("insert into tasks(title, detail, priority) values('11', '22', 11)");
+			db.insert(this.Table_Name, null, value);
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
