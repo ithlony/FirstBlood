@@ -20,6 +20,32 @@
         android:ems="10"
         android:inputType="textMultiLine" />
 
+    <RadioGroup
+        android:id="@+id/RG_task_freq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/R_important"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Important" />
+
+        <RadioButton
+            android:id="@+id/R_routine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Routine" />
+
+        <RadioButton
+            android:id="@+id/R_longterm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longterm" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/BTN_add_new_task"
         android:layout_width="wrap_content"

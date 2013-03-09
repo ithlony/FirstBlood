@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -37,18 +39,21 @@ public class ItemDetailFragment extends Fragment {
 	 * The dummy content this fragment is presenting.
 	 */
 	private DummyContent.DummyItem mItem;
+	private TaskStorage storage;
+	List<Task> task_list;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
 	public ItemDetailFragment() {
+		
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		storage = new TaskStorage(this.getActivity());
 		
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			// Load the dummy content specified by the fragment
@@ -84,25 +89,34 @@ public class ItemDetailFragment extends Fragment {
 				rootView = inflater.inflate(R.layout.list_of_tasks, container,
 						false);
 				// tv.setText("Show tasks!");
-				ListView listView = (ListView) rootView
-						.findViewById(R.id.TaskListView);
+				ListView important = (ListView) rootView
+						.findViewById(R.id.LV_important_task);
+				ListView routine= (ListView) rootView
+						.findViewById(R.id.LV_routine_task);
+				ListView longterm = (ListView) rootView
+						.findViewById(R.id.LV_longterm_task);
 				
-				TaskStorage t = new TaskStorage(context);
-				List<Task> task_list = t.get_tasks();
+				task_list = storage.get_tasks();
 
 
 				if (task_list == null || task_list.isEmpty()) {
-					listView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, new String[] {"No Task!"}));
+					important.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, new String[] {"No Task!"}));
 				} else {
 					
-					SimpleAdapter adapter = new SimpleAdapter(
+					show_task_list(context, important, Task.Freq.important);
+					show_task_list(context, routine, Task.Freq.routine);
+					show_task_list(context, longterm, Task.Freq.longterm);
+					/*
+					SimpleAdapter important_adapter = new SimpleAdapter(
 							context,
-							task_list_for_view(task_list),// t.get_tasks(),
+							task_list_for_view(task_list, Task.Freq.important),// t.get_tasks(),
 							R.layout.task_list_item, new String[] {
 									"TaskTitle", "TaskInfo" }, new int[] {
 									R.id.TaskTitle, R.id.TaskInfo });
-					listView.setAdapter(adapter);
-					
+					important.setAdapter(important_adapter);
+					int bg_color = Color.RED;
+					important.setBackgroundColor(bg_color);
+					*/
 				}
 				
 			}
@@ -111,9 +125,50 @@ public class ItemDetailFragment extends Fragment {
 		return rootView;
 	}
 
+	void show_task_list(Context context, ListView list_view, Task.Freq task_freq)
+	{
+		
+		SimpleAdapter adapter = new SimpleAdapter(
+				context,
+				task_list_for_view(task_list, task_freq),// t.get_tasks(),
+				R.layout.task_list_item, new String[] {
+						"TaskTitle", "TaskInfo" }, new int[] {
+						R.id.TaskTitle, R.id.TaskInfo });
+		list_view.setAdapter(adapter);
+		int bg_color = Color.RED;
+		switch (task_freq.value())
+		{
+		case 0:
+			bg_color = Color.RED;
+			break;
+		case 1:
+			bg_color = Color.BLUE;
+			break;
+		case 2:
+			bg_color = Color.GREEN;
+			break;
+		}
+		list_view.setBackgroundColor(bg_color);
+	}
+	
 	ArrayList<HashMap<String, String>> task_list_for_view(List<Task> task_list) {
 		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
 		for (Task task : task_list) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("TaskTitle", task.title);
+			map.put("TaskInfo", task.detail);
+			//map.put("TaskType", String.valueOf(task.frequency));
+			list.add(map);
+		}
+
+		return list;
+	}
+	
+	ArrayList<HashMap<String, String>> task_list_for_view(List<Task> task_list, Task.Freq target_freq) {
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+		for (Task task : task_list) {
+			if (task.frequency != target_freq.value())
+				continue;
 			HashMap<String, String> map = new HashMap<String, String>();
 			map.put("TaskTitle", task.title);
 			map.put("TaskInfo", task.detail);
@@ -129,6 +184,7 @@ public class ItemDetailFragment extends Fragment {
 		Button button = (Button)view.findViewById(R.id.BTN_add_new_task);
 		final EditText task_title_view = (EditText) view.findViewById(R.id.TXT_task_title);
 		final EditText task_detail_view = (EditText) view.findViewById(R.id.TXT_task_detail);
+		final RadioGroup task_freq_group = (RadioGroup) view.findViewById(R.id.RG_task_freq);
 		
 		
 		button.setOnClickListener(new View.OnClickListener() {
@@ -142,6 +198,7 @@ public class ItemDetailFragment extends Fragment {
 				
 				task.title = task_title_view.getText().toString();
 				task.detail = task_detail_view.getText().toString();
+				task.frequency = get_task_frequency_by_id(task_freq_group);
 				
 				if (task.title.length() == 0)
 				{
@@ -152,5 +209,20 @@ public class ItemDetailFragment extends Fragment {
 				}
 			}
 		});
+	}
+	
+	int get_task_frequency_by_id(RadioGroup group)
+	{
+		int id = group.getCheckedRadioButtonId();
+		switch (id)
+		{
+		case R.id.R_important:
+			return Task.Freq.important.value();
+		case R.id.R_routine:
+			return Task.Freq.routine.value();
+		case R.id.R_longterm:
+			return Task.Freq.longterm.value();
+		}
+		return 0;
 	}
 }

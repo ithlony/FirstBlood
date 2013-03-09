@@ -8,6 +8,35 @@ public class Task {
 	public String title;
 	public String detail;
 	public int priority;
+	public enum Freq{
+		important(0), routine(1), longterm(2);
+		
+		private int value;
+		
+		private Freq(int value)
+		{
+			this.value = value;
+		}
+		
+		public static Freq valueOf(int value)
+		{
+			switch (value)
+			{
+			case 0:
+				return important;
+			case 1:
+				return routine;
+			case 2:
+				return longterm;
+			}
+			return null;
+		}
+		
+		public int value()
+		{
+			return value;
+		}
+	};
 	public int frequency;
 	
 	public Task()

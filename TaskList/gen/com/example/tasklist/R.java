@@ -14,14 +14,20 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int BTN_add_new_task=0x7f060007;
+        public static final int BTN_add_new_task=0x7f06000d;
+        public static final int LV_important_task=0x7f060004;
+        public static final int LV_longterm_task=0x7f060006;
+        public static final int LV_routine_task=0x7f060005;
         public static final int LinearLayout01=0x7f060003;
-        public static final int MyListItem=0x7f060008;
-        public static final int TXT_task_detail=0x7f060006;
-        public static final int TXT_task_title=0x7f060005;
-        public static final int TaskInfo=0x7f06000a;
-        public static final int TaskListView=0x7f060004;
-        public static final int TaskTitle=0x7f060009;
+        public static final int MyListItem=0x7f06000e;
+        public static final int RG_task_freq=0x7f060009;
+        public static final int R_important=0x7f06000a;
+        public static final int R_longterm=0x7f06000c;
+        public static final int R_routine=0x7f06000b;
+        public static final int TXT_task_detail=0x7f060008;
+        public static final int TXT_task_title=0x7f060007;
+        public static final int TaskInfo=0x7f060010;
+        public static final int TaskTitle=0x7f06000f;
         public static final int item_detail=0x7f060002;
         public static final int item_detail_container=0x7f060000;
         public static final int item_list=0x7f060001;
